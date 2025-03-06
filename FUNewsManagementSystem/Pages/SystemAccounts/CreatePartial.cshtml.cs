@@ -31,10 +31,10 @@ namespace FUNewsManagementSystem.Pages.SystemAccounts
                         .Max(t => (short?)t.AccountId) ?? 0;
                 SystemAccount.AccountId = (short)(maxId + 1);
                 await _accountService.AddSystemAccountAsync(SystemAccount);
-                return RedirectToPage("/SystemAccounts/Index"); // ✅ Redirect khi thành công
+                return RedirectToPage("/SystemAccounts/Index"); 
             }
 
-            return Page(); // ❌ Hiện lại form khi có lỗi
+            return Page(); 
 
         }
     }

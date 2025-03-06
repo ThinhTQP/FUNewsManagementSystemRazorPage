@@ -29,7 +29,25 @@ namespace FUNewsManagementSystem.Pages.Reports
 
         public List<NewsArticle> NewsArticles { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(DateTime? startDate, DateTime? endDate)
+        {
+            StartDate ??= startDate;
+            EndDate ??= endDate;
+            await FilterArticlesAsync();
+            return Page();
+        }
+
+
+        public async Task<IActionResult> OnGetFilterAsync(DateTime? startDate, DateTime? endDate)
+        {
+            StartDate = startDate;
+            EndDate = endDate;
+            await FilterArticlesAsync();
+            return Page();
+        }
+
+
+        public async Task<IActionResult> OnGetExportToPDFAsync()
         {
             var articles = await _newsArticleService.GetAllNewsArticlesAsync();
 
@@ -37,19 +55,6 @@ namespace FUNewsManagementSystem.Pages.Reports
                 articles = articles.Where(a => a.CreatedDate >= StartDate.Value).ToList();
             if (EndDate.HasValue)
                 articles = articles.Where(a => a.CreatedDate <= EndDate.Value).ToList();
-
-            NewsArticles = articles.OrderByDescending(a => a.CreatedDate).ToList();
-            return Page();
-        }
-
-        public async Task<IActionResult> OnGetExportToPDFAsync()
-        {
-            var articles = await _newsArticleService.GetAllNewsArticlesAsync();
-
-            if (StartDate.HasValue)
-                articles = articles.Where(a => a.ModifiedDate >= StartDate.Value).ToList();
-            if (EndDate.HasValue)
-                articles = articles.Where(a => a.ModifiedDate <= EndDate.Value).ToList();
 
             articles = articles.OrderByDescending(a => a.CreatedDate).ToList();
 
@@ -66,13 +71,25 @@ namespace FUNewsManagementSystem.Pages.Reports
                     pdfDoc.Add(new Paragraph($"Title: {article.NewsTitle}"));
                     pdfDoc.Add(new Paragraph($"Headline: {article.Headline}"));
                     pdfDoc.Add(new Paragraph($"Content: {article.NewsContent.Substring(0, Math.Min(150, article.NewsContent.Length))}..."));
-                    pdfDoc.Add(new Paragraph($"Date: {article.ModifiedDate?.ToString("dd/MM/yyyy")}"));
+                    pdfDoc.Add(new Paragraph($"Date: {article.CreatedDate?.ToString("dd/MM/yyyy")}"));
                     pdfDoc.Add(new Paragraph("------------------------------------------------------"));
                 }
 
                 pdfDoc.Close();
                 return File(stream.ToArray(), "application/pdf", "NewsReport.pdf");
             }
+        }
+
+        private async Task FilterArticlesAsync()
+        {
+            var articles = await _newsArticleService.GetAllNewsArticlesAsync();
+
+            if (StartDate.HasValue)
+                articles = articles.Where(a => a.CreatedDate >= StartDate.Value).ToList();
+            if (EndDate.HasValue)
+                articles = articles.Where(a => a.CreatedDate <= EndDate.Value).ToList();
+
+            NewsArticles = articles.OrderByDescending(a => a.CreatedDate).ToList();
         }
     }
 }

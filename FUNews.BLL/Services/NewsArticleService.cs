@@ -68,6 +68,7 @@ public class NewsArticleService : INewsArticleService
         existingArticle.NewsTitle = newsArticle.NewsTitle;
         existingArticle.Headline = newsArticle.Headline;
         existingArticle.NewsContent = newsArticle.NewsContent;
+        existingArticle.NewsSource = newsArticle.NewsSource;
         existingArticle.CategoryId = newsArticle.CategoryId;
         existingArticle.NewsStatus = newsArticle.NewsStatus;
 

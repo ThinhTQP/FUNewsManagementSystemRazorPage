@@ -7,35 +7,35 @@
 <form id="createNewsArticleForm" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <!-- News Title -->
+   
     <div class="mb-3">
         <label asp-for="NewsArticle.NewsTitle" class="form-label">📝 News Title</label>
         <input asp-for="NewsArticle.NewsTitle" class="form-control" required />
         <span asp-validation-for="NewsArticle.NewsTitle" class="text-danger"></span>
     </div>
 
-    <!-- Headline -->
+  
     <div class="mb-3">
         <label asp-for="NewsArticle.Headline" class="form-label">📰 Headline</label>
         <input asp-for="NewsArticle.Headline" class="form-control" required />
         <span asp-validation-for="NewsArticle.Headline" class="text-danger"></span>
     </div>
 
-    <!-- News Content -->
+   
     <div class="mb-3">
         <label asp-for="NewsArticle.NewsContent" class="form-label">📄 Content</label>
         <textarea asp-for="NewsArticle.NewsContent" class="form-control" required></textarea>
         <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
     </div>
 
-    <!-- News Source -->
+   
     <div class="mb-3">
         <label asp-for="NewsArticle.NewsSource" class="form-label">🔗 Source</label>
         <input asp-for="NewsArticle.NewsSource" class="form-control" required />
         <span asp-validation-for="NewsArticle.NewsSource" class="text-danger"></span>
     </div>
 
-    <!-- Category -->
+   
     <div class="mb-3">
         <label asp-for="NewsArticle.CategoryId" class="form-label">📂 Category</label>
         <select asp-for="NewsArticle.CategoryId" asp-items="Model.CategoryList" class="form-select" required>
@@ -44,14 +44,17 @@
         <span asp-validation-for="NewsArticle.CategoryId" class="text-danger"></span>
     </div>
 
-    <!-- News Status -->
+
     <div class="mb-3">
-        <label class="form-label">📌 Status</label>
-        <input type="text" class="form-control" value="Active" readonly />
-        <input type="hidden" asp-for="NewsArticle.NewsStatus" value="true" />
+        <label asp-for="NewsArticle.NewsStatus" class="form-label">📌 News Status</label>
+        <select asp-for="NewsArticle.NewsStatus" class="form-select" required>
+            <option value="true">✅ Active</option>
+            <option value="false">⛔ Inactive</option>
+        </select>
+        <span asp-validation-for="NewsArticle.NewsStatus" class="text-danger"></span>
     </div>
 
-    <!-- Tags -->
+   
     <div class="mb-3">
         <label class="control-label">🏷️ Tags</label>
         <div>
@@ -67,7 +70,7 @@
     </div>
 
 
-    <!-- Submit Button -->
+   
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">❌ Cancel</button>
         <button type="submit" class="btn btn-primary">✅ Create</button>

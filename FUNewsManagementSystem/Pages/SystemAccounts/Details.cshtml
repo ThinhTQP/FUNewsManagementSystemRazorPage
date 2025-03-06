@@ -23,6 +23,8 @@
             </div>
             <div class="card-body">
                 <dl class="row">
+                    <dt class="col-sm-3"> ID</dt>
+                    <dd class="col-sm-9 fw-semibold">@Html.DisplayFor(model => model.SystemAccount.AccountId)</dd>
                     <dt class="col-sm-3">👤 Name</dt>
                     <dd class="col-sm-9 fw-semibold">@Html.DisplayFor(model => model.SystemAccount.AccountName)</dd>
 
@@ -37,7 +39,7 @@
                     </dd>
 
                     <dt class="col-sm-3">🔒 Password</dt>
-                    <dd class="col-sm-9 text-muted"> @Html.DisplayFor(model => model.SystemAccount.AccountPassword)</dd>
+                    <dd class="col-sm-9 text-muted"> ********</dd>
                 </dl>
             </div>
          

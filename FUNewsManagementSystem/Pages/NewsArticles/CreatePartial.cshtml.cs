@@ -1,9 +1,11 @@
 ﻿using BusinessObjects.Entities;
 using FUNews.BLL.Services;
+using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 
@@ -16,6 +18,7 @@ namespace FUNewsManagementSystem.Pages.NewsArticles
         private readonly INewsArticleService _newsArticleService;
         private readonly ICategoryService _categoryService;
         private readonly ITagService _tagService;
+        private readonly IHubContext<SignalrServer> _hubContext;
 
         [BindProperty]
         public NewsArticle NewsArticle { get; set; }
@@ -26,11 +29,13 @@ namespace FUNewsManagementSystem.Pages.NewsArticles
         public SelectList CategoryList { get; set; }
         public MultiSelectList TagList { get; set; }
 
-        public CreatePartialModel(INewsArticleService newsArticleService, ICategoryService categoryService, ITagService tagService)
+        public CreatePartialModel(INewsArticleService newsArticleService, ICategoryService categoryService, ITagService tagService, IHubContext<SignalrServer> hubContext)
         {
             _newsArticleService = newsArticleService;
             _categoryService = categoryService;
             _tagService = tagService;
+            _hubContext = hubContext;
+
         }
 
         [Authorize(Policy = "StaffOnly")]
@@ -64,7 +69,7 @@ namespace FUNewsManagementSystem.Pages.NewsArticles
 
 
             await _newsArticleService.AddNewsArticleAsync(NewsArticle, TagIds);
-
+            await _hubContext.Clients.All.SendAsync("LoadAllArticles");
             return RedirectToPage("/NewsArticles/Index");
         }
 

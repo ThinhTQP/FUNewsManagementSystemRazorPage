@@ -18,18 +18,19 @@
             <h1 class="display-5">📢 FPT University News</h1>
         </div>
 
-        <!-- Bộ lọc ngày -->
         <form method="get" class="row g-3 mb-4">
             <div class="col-md-4">
                 <label for="startDate" class="form-label">📅 Start Date</label>
-                <input type="date" name="startDate" id="startDate" class="form-control" value="@Model.StartDate">
+                <input type="date" asp-for="StartDate" class="form-control">
             </div>
             <div class="col-md-4">
                 <label for="endDate" class="form-label">📅 End Date</label>
-                <input type="date" name="endDate" id="endDate" class="form-control" value="@Model.EndDate">
+                <input type="date" asp-for="EndDate" class="form-control">
             </div>
             <div class="col-md-4 align-self-end">
-                <button type="submit" class="btn btn-primary">🔍 Filter</button>
+                <button type="submit" class="btn btn-primary">
+                    🔍 Filter
+                </button>
                 <a class="btn btn-success" asp-page-handler="ExportToPDF"
                    asp-route-startDate="@Model.StartDate"
                    asp-route-endDate="@Model.EndDate">
@@ -38,7 +39,7 @@
             </div>
         </form>
 
-        <!-- Danh sách bài báo -->
+
         <div class="row g-4">
             @foreach (var item in Model.NewsArticles)
             {
@@ -56,7 +57,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted text-end">
-                            🕒 Update: @item.ModifiedDate?.ToString("dd/MM/yyyy")
+                            🕒 Created: @item.CreatedDate?.ToString("dd/MM/yyyy")
                         </div>
                     </div>
                 </div>

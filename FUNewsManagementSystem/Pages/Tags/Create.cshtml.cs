@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObjects.Entities;
+using FUNewsManagementSystem.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace FUNewsManagementSystem.Pages.Tags
@@ -14,9 +16,11 @@ namespace FUNewsManagementSystem.Pages.Tags
     {
         private readonly ITagService _tagService;
 
-        public CreateModel(ITagService tagService)
+        private readonly IHubContext<SignalrServer> _hubContext;
+        public CreateModel(ITagService tagService, IHubContext<SignalrServer> hubContext)
         {
             _tagService = tagService;
+            _hubContext = hubContext;
         }
 
         public IActionResult OnGet()
@@ -37,6 +41,8 @@ namespace FUNewsManagementSystem.Pages.Tags
                 Tag.TagId = maxId + 1;
 
                 await _tagService.AddTagAsync(Tag);
+                await _hubContext.Clients.All.SendAsync("LoadAllItems");
+
                 return RedirectToPage("./Index");
             }
 

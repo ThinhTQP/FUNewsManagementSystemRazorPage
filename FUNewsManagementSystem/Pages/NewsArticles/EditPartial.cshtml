@@ -48,10 +48,14 @@
 
     <!-- News Status -->
     <div class="mb-3">
-        <input type="text" class="form-control" value="Active" readonly />
-        <input type="hidden" asp-for="NewsArticle.NewsStatus" value="true" />
-
+        <label asp-for="NewsArticle.NewsStatus" class="form-label">📌 News Status</label>
+        <select asp-for="NewsArticle.NewsStatus" class="form-select" required>
+            <option value="true">✅ Active</option>
+            <option value="false">⛔ Inactive</option>
+        </select>
+        <span asp-validation-for="NewsArticle.NewsStatus" class="text-danger"></span>
     </div>
+
 
     <!-- Tags -->
     <div class="form-group">

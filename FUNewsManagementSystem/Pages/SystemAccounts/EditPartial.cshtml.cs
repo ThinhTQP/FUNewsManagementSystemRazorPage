@@ -38,10 +38,10 @@ namespace FUNewsManagementSystem.Pages.SystemAccounts
             if (ModelState.IsValid)
             {
                 await _accountService.UpdateSystemAccountAsync(SystemAccount);
-                return RedirectToPage("/SystemAccounts/Index"); // ✅ Redirect khi thành công
+                return RedirectToPage("/SystemAccounts/Index");
             }
 
-            return Page(); // ❌ Hiện lại form khi có lỗi
+            return Page();
         }
     }
 }

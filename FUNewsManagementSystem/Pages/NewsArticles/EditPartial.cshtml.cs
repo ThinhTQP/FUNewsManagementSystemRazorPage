@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using FUNews.BLL.Services;
+using FUNewsManagementSystem.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FUNewsManagementSystem.Pages.NewsArticles
 {
@@ -17,12 +19,13 @@ namespace FUNewsManagementSystem.Pages.NewsArticles
         private readonly INewsArticleService _newsArticleService;
         private readonly ICategoryService _categoryService;
         private readonly ITagService _tagService;
-
-        public EditPartialModel(INewsArticleService newsArticleService, ICategoryService categoryService, ITagService tagService)
+        private readonly IHubContext<SignalrServer> _hubContext;
+        public EditPartialModel(INewsArticleService newsArticleService, ICategoryService categoryService, ITagService tagService, IHubContext<SignalrServer> hubContext)
         {
             _newsArticleService = newsArticleService;
             _categoryService = categoryService;
             _tagService = tagService;
+            _hubContext = hubContext;
         }
 
         [BindProperty]
@@ -78,6 +81,8 @@ namespace FUNewsManagementSystem.Pages.NewsArticles
             Console.WriteLine($"[DEBUG] TagIds Count: {SelectedTagIds?.Count ?? 0}");
             Console.WriteLine($"[DEBUG] TagIds: {string.Join(", ", SelectedTagIds ?? new List<int>())}");
             await _newsArticleService.UpdateNewsArticleAsync(NewsArticle, SelectedTagIds);
+            await _hubContext.Clients.All.SendAsync("LoadAllArticles");
+
             return RedirectToPage("/NewsArticles/Index");
         }
     }
