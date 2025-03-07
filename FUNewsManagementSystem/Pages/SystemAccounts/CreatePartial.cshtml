@@ -7,6 +7,12 @@
     @Html.AntiForgeryToken() <!-- ✅ CSRF token bắt buộc -->
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="mb-3">
+        <label asp-for="SystemAccount.AccountId" class="form-label">🆔 Account ID</label>
+        <input asp-for="SystemAccount.AccountId" class="form-control" id="accountIdInput" required />
+        <span asp-validation-for="SystemAccount.AccountId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="SystemAccount.AccountName" class="form-label">👤 Account Name</label>
         <input asp-for="SystemAccount.AccountName" class="form-control" required />
         <span asp-validation-for="SystemAccount.AccountName" class="text-danger"></span>
@@ -34,3 +40,5 @@
         <button type="submit" class="btn btn-primary">✅ Create</button>
     </div>
 </form>
+
+

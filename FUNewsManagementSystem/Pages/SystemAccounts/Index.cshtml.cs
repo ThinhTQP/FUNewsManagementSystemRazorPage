@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Ocsp;
 
 namespace FUNewsManagementSystem.Pages.SystemAccounts
 {
@@ -21,7 +23,11 @@ namespace FUNewsManagementSystem.Pages.SystemAccounts
 
         public async Task OnGetAsync()
         {
+
             Accounts = await _accountService.GetAllSystemAccountsAsync();
+
+
         }
+
     }
 }

@@ -24,18 +24,19 @@ namespace FUNewsManagementSystem.Pages.SystemAccounts
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var existingAccounts = await _accountService.GetAllSystemAccountsAsync();
 
-            if (ModelState.IsValid)
+            if (existingAccounts.Any(a => a.AccountId == SystemAccount.AccountId))
             {
-                var maxId = (await _accountService.GetAllSystemAccountsAsync())
-                        .Max(t => (short?)t.AccountId) ?? 0;
-                SystemAccount.AccountId = (short)(maxId + 1);
-                await _accountService.AddSystemAccountAsync(SystemAccount);
-                return RedirectToPage("/SystemAccounts/Index"); 
+                TempData["ErrorMessage"] = "❌ Account ID đã tồn tại. Vui lòng nhập ID khác."; 
+                return RedirectToPage("./Index");
             }
 
-            return Page(); 
-
+            await _accountService.AddSystemAccountAsync(SystemAccount);
+            return RedirectToPage("./Index");
         }
+
+
+
     }
 }
