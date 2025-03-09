@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,16 +9,21 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.IO;
 using BusinessObjects.Entities;
+using FUNews.BLL.Services;
 
 namespace FUNewsManagementSystem.Pages.Reports
 {
     public class IndexModel : PageModel
     {
         private readonly INewsArticleService _newsArticleService;
+        private readonly ICategoryService _categoryService;
+        private readonly ISystemAccountService _systemAccountService;
 
-        public IndexModel(INewsArticleService newsArticleService)
+        public IndexModel(INewsArticleService newsArticleService, ICategoryService categoryService, ISystemAccountService systemAccountService)
         {
             _newsArticleService = newsArticleService;
+            _categoryService = categoryService;
+            _systemAccountService = systemAccountService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -28,59 +33,20 @@ namespace FUNewsManagementSystem.Pages.Reports
         public DateTime? EndDate { get; set; }
 
         public List<NewsArticle> NewsArticles { get; set; }
+        public int CountArticles { get; set; }
+
+        public Dictionary<string, int> CategoryStats { get; set; }
+        public Dictionary<string, int> StaffStats { get; set; }
 
         public async Task<IActionResult> OnGetAsync(DateTime? startDate, DateTime? endDate)
         {
             StartDate ??= startDate;
             EndDate ??= endDate;
-            await FilterArticlesAsync();
+            await LoadDataAsync();
             return Page();
         }
 
-
-        public async Task<IActionResult> OnGetFilterAsync(DateTime? startDate, DateTime? endDate)
-        {
-            StartDate = startDate;
-            EndDate = endDate;
-            await FilterArticlesAsync();
-            return Page();
-        }
-
-
-        public async Task<IActionResult> OnGetExportToPDFAsync()
-        {
-            var articles = await _newsArticleService.GetAllNewsArticlesAsync();
-
-            if (StartDate.HasValue)
-                articles = articles.Where(a => a.CreatedDate >= StartDate.Value).ToList();
-            if (EndDate.HasValue)
-                articles = articles.Where(a => a.CreatedDate <= EndDate.Value).ToList();
-
-            articles = articles.OrderByDescending(a => a.CreatedDate).ToList();
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                Document pdfDoc = new Document(PageSize.A4);
-                PdfWriter.GetInstance(pdfDoc, stream);
-                pdfDoc.Open();
-                pdfDoc.Add(new Paragraph("FPT University News Report"));
-                pdfDoc.Add(new Paragraph("\n"));
-
-                foreach (var article in articles)
-                {
-                    pdfDoc.Add(new Paragraph($"Title: {article.NewsTitle}"));
-                    pdfDoc.Add(new Paragraph($"Headline: {article.Headline}"));
-                    pdfDoc.Add(new Paragraph($"Content: {article.NewsContent.Substring(0, Math.Min(150, article.NewsContent.Length))}..."));
-                    pdfDoc.Add(new Paragraph($"Date: {article.CreatedDate?.ToString("dd/MM/yyyy")}"));
-                    pdfDoc.Add(new Paragraph("------------------------------------------------------"));
-                }
-
-                pdfDoc.Close();
-                return File(stream.ToArray(), "application/pdf", "NewsReport.pdf");
-            }
-        }
-
-        private async Task FilterArticlesAsync()
+        private async Task LoadDataAsync()
         {
             var articles = await _newsArticleService.GetAllNewsArticlesAsync();
 
@@ -90,6 +56,20 @@ namespace FUNewsManagementSystem.Pages.Reports
                 articles = articles.Where(a => a.CreatedDate <= EndDate.Value).ToList();
 
             NewsArticles = articles.OrderByDescending(a => a.CreatedDate).ToList();
+            CountArticles = NewsArticles.Count;
+
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            CategoryStats = categories.ToDictionary(
+                c => c.CategoryName,
+                c => articles.Count(a => a.CategoryId == c.CategoryId)
+            );
+
+            var staffList = await _systemAccountService.GetAllSystemAccountsAsync();
+            StaffStats = staffList.ToDictionary(
+                s => s.AccountName,
+                s => articles.Count(a => a.CreatedById == s.AccountId)
+            );
         }
     }
+
 }
